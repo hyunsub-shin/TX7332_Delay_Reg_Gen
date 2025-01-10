@@ -101,28 +101,40 @@ jobs:
       with:
         fetch-depth: 0  # 전체 히스토리 가져오기
     
-    # 버전 태그 자동 생성
+    # 버전 태그를 자동으로 생성하는 단계
     - name: Create version tag
-      if: github.ref == 'refs/heads/main'
-      id: create_tag  # 태그 생성 단계에 ID 추가
+      if: github.ref == 'refs/heads/main'  # main 브랜치에 push될 때만 실행
+      id: create_tag  # 다음 단계에서 이 단계의 출력을 참조하기 위한 ID
       run: |
+        # 가장 최근 태그를 가져옴. 태그가 없으면 v1.0.0을 시작점으로 사용
         latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
         
+        # 버전 번호를 major.minor.patch로 분리
+        # sed 's/v//'는 버전 문자열에서 'v' 접두사를 제거
+        # cut -d. -f1,2,3은 점(.)을 구분자로 사용하여 각 버전 번호를 추출
         major=$(echo $latest_tag | sed 's/v//' | cut -d. -f1)
         minor=$(echo $latest_tag | sed 's/v//' | cut -d. -f2)
         patch=$(echo $latest_tag | sed 's/v//' | cut -d. -f3)
+        
+        # patch 버전을 1 증가
         new_patch=$((patch + 1))
+        # 새로운 태그 생성 (v1.0.1 형식)
         new_tag="v${major}.${minor}.${new_patch}"
         
+        # 디버깅을 위해 새 태그 정보 출력
         echo "Creating new tag: $new_tag"
-        echo "new_tag=${new_tag}" >> $GITHUB_OUTPUT  # 태그 값을 출력 변수로 저장
+        # 다음 단계에서 사용할 수 있도록 태그 값을 GitHub Actions 출력 변수로 저장
+        echo "new_tag=${new_tag}" >> $GITHUB_OUTPUT
         
-        git config --local user.email "subbylife@gmail.com"
-        git config --local user.name "subbylife"
+        # Git 사용자 정보 설정
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        # 새 태그 생성 및 원격 저장소에 푸시
         git tag -a $new_tag -m "Release $new_tag"
         git push origin $new_tag
 
-    # 버전 태그 자동 생성
+    # Python 설정
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
@@ -196,17 +208,17 @@ jobs:
       run: |
         pyinstaller TX7332_Pattern_Delay_Gen.spec
     
-    # GitHub 릴리스 생성
+    # GitHub 릴리스를 생성하는 단계
     - name: Create Release
-      if: steps.create_tag.outputs.new_tag != ''  # 태그가 생성된 경우에만 실행
+      if: steps.create_tag.outputs.new_tag != ''  # 태그가 성공적으로 생성된 경우에만 실행
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ steps.create_tag.outputs.new_tag }}  # 생성된 태그 사용
-        files: |
+        tag_name: ${{ steps.create_tag.outputs.new_tag }}  # 이전 단계에서 생성한 태그 사용
+        files: |  # 릴리스에 포함할 파일들
           dist/TX7332_Pattern_Delay_Gen*
-        name: Release ${{ steps.create_tag.outputs.new_tag }}
-        draft: false
-        prerelease: false
-        generate_release_notes: true
+        name: Release ${{ steps.create_tag.outputs.new_tag }}  # 릴리스 제목
+        draft: false  # 초안 모드로 생성하지 않음
+        prerelease: false  # 정식 릴리스로 표시
+        generate_release_notes: true  # 자동으로 릴리스 노트 생성
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub API 접근을 위한 토큰
