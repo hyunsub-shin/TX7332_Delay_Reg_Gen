@@ -19,10 +19,19 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
+        
     - name: Install dependencies
       run: |
-        python3 -m pip install --upgrade pip
+        sudo apt-get update
+        sudo apt-get install -y xvfb libxcb-xinerama0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 libxcb-randr0 libxcb-render-util0 libxcb-xfixes0 libxcb-xkb1 libxkbcommon-x11-0
+        python -m pip install --upgrade pip
+        pip install pandas numpy PyQt5
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
     - name: Run Python
       run: |
+        export QT_DEBUG_PLUGINS=1
+        export DISPLAY=:99
+        Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        sleep 3
         python3 TX7332_Pattern_Delay_Gen.py
