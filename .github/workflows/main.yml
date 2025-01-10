@@ -110,7 +110,8 @@ jobs:
     - name: Create and modify spec file
       run: |
         # spec 파일 생성
-        pyi-makespec -w -F TX7332_Pattern_Delay_Gen.py
+        # pyi-makespec -w -F TX7332_Pattern_Delay_Gen.py
+        pyinstaller -w -F TX7332_Pattern_Delay_Gen.py
         
         # spec 파일 수정
         cat > TX7332_Pattern_Delay_Gen.spec << EOL
