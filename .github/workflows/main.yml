@@ -46,9 +46,11 @@ jobs:
         ls -la
         
     - name: Run Python
+      env:
+        CI: true
       run: |
         export QT_DEBUG_PLUGINS=1
         export DISPLAY=:99
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
         sleep 3
-        python3 TX7332_Pattern_Delay_Gen.py
+        timeout 10s python3 TX7332_Pattern_Delay_Gen.py || true

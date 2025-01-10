@@ -2,9 +2,10 @@
 ##                  Used for TX7332                                  ##
 ##                  channel delay calculator                         ##
 #######################################################################
-from PyQt5 import QtWidgets, uic
+from PyQt5 import QtWidgets, uic, QtCore
 from PyQt5.QtGui import *
 import os
+import sys
 
 import numpy as np
 import pandas as pd
@@ -373,4 +374,10 @@ ui.pushButton_S_cal.clicked.connect(Sector_Gen_Delay)
 ui.pushButton_P_Gen.clicked.connect(Pattern_Gen)
 
 ui.show()
-app.exec()
+
+# CI 환경에서 실행 중인지 확인
+if os.environ.get('CI'):
+    # 3초 후 앱 종료
+    QtCore.QTimer.singleShot(3000, app.quit)
+
+sys.exit(app.exec_())
