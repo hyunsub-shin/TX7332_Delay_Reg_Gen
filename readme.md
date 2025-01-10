@@ -8,13 +8,14 @@ TX7332 Pattern Delay Register Generator는 TX7332 칩의 패턴 딜레이 레지
 
 ## Features
 - Pattern Delay Register 생성
+- Pattern profile Register 생성
 - GUI 인터페이스 제공
-- 실시간 값 계산
 
 ## Requirements
-- Python 3.11
+- Python 3.9.12
 - PyQt5
 - pandas
 - numpy
 
-## Installation
+## Executable File
+- pyinstaller
