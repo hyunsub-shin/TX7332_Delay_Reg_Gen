@@ -1,5 +1,7 @@
 # Virtual Environment
 venv_tx7332/
+build
+dist
 
 # Python
 __pycache__/
