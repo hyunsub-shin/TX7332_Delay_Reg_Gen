@@ -22,7 +22,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        python -m pip install --upgrade pip
+        pip install pandas numpy PyQt5
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run Python
       run: |
-        python3 TX7332_Pattern_Delay_Gen.py
+        python TX7332_Pattern_Delay_Gen.py
