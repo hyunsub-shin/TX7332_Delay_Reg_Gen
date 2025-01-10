@@ -93,6 +93,10 @@ jobs:
     # 태그가 생성된 경우에만 실행
     if: startsWith(github.ref, 'refs/tags/')
     
+    # 권한 설정 추가
+    permissions:
+      contents: write  # 릴리스 생성을 위한 권한
+    
     steps:
     - uses: actions/checkout@v2
     
