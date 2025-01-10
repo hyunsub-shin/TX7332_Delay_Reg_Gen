@@ -9,6 +9,11 @@ on:
       - 'LICENSE'
       - 'README.md'
       - 'docs/**'
+      - 'img/**'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.gif'
   pull_request:
     branches: [ "main" ]
     paths-ignore:
@@ -17,6 +22,11 @@ on:
       - 'LICENSE'
       - 'README.md'
       - 'docs/**'
+      - 'img/**'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.gif'
 
 jobs:
   build:
