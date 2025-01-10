@@ -8,11 +8,10 @@ on:
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
-        python-version: ["3.10"]
+        python-version: ["3.11"]
 
     steps:
     - uses: actions/checkout@v2
@@ -22,9 +21,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip
-        pip install pandas numpy PyQt5
+        python3 -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Run Python
       run: |
-        python TX7332_Pattern_Delay_Gen.py
+        python3 TX7332_Pattern_Delay_Gen.py

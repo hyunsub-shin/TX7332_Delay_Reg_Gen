@@ -48,7 +48,6 @@ ui = uic.loadUi(BASE_DIR + r'\TX7332_Pattern_Delay_Gen.ui')
 ui.setWindowTitle("TX7332 Delay & Pattern Reg Generator")
 ####################################################
 
-
 def Linear_Gen_Delay():
     delay_data = np.float16(np.zeros(32))
     delay_int = np.int16(np.zeros(32))
@@ -364,7 +363,6 @@ ui.pushButton_L_cal.clicked.connect(Linear_Gen_Delay)
 ui.pushButton_C_cal.clicked.connect(Convex_Gen_Delay)
 ui.pushButton_S_cal.clicked.connect(Sector_Gen_Delay)
 ui.pushButton_P_Gen.clicked.connect(Pattern_Gen)
-
 
 ui.show()
 app.exec()
