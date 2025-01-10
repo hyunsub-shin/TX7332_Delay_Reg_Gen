@@ -1,0 +1,9 @@
+# Virtual Environment
+venv_tx7332/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
