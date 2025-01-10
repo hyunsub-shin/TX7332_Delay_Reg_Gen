@@ -77,14 +77,6 @@ def Linear_Gen_Delay():
     Gen_Delay_Table(delay_int, name, 0)
     display_plot(delay_int,delay_int,delay_int,delay_int)
     
-    # plt.figure()
-    # plt.title('channel delay_'+ui.lineEdit_focus_L.text()+"mm")
-    # plt.xlabel('channel')
-    # plt.ylabel("delay")
-    # plt.plot(delay_int)
-    # plt.grid()
-    # plt.show()
-
 
 def Convex_Gen_Delay():
     delay_data = np.float16(np.zeros(32))
@@ -122,14 +114,6 @@ def Convex_Gen_Delay():
     Gen_Delay_Table(delay_int, name, 0)
     display_plot(delay_int,delay_int,delay_int,delay_int)
     
-    # plt.figure()
-    # plt.title('channel delay_'+ui.lineEdit_focus_L.text()+"mm")
-    # plt.xlabel('channel')
-    # plt.ylabel("delay")
-    # plt.plot(delay_int)
-    # plt.grid()
-    # plt.show()
-
 
 def Gen_Delay_Table(data, name, isSector):
     # df = pd.DataFrame(data)
@@ -176,26 +160,18 @@ def Gen_Delay_Table(data, name, isSector):
     
     # print("################# 7332 Reg Data #################")
     # df_reg_data = pd.DataFrame(np.int16(np.zeros([128,16])))    
-    df_reg_data.iloc[0:,0] = (df1.iloc[0:,31]) + (df1.iloc[0:,29]) 
-    df_reg_data.iloc[0:,1] = (df1.iloc[0:,27]) + (df1.iloc[0:,25]) 
-    df_reg_data.iloc[0:,2] = (df1.iloc[0:,23]) + (df1.iloc[0:,21]) 
-    df_reg_data.iloc[0:,3] = (df1.iloc[0:,19]) + (df1.iloc[0:,17]) 
-    df_reg_data.iloc[0:,4] = (df1.iloc[0:,30]) + (df1.iloc[0:,28]) 
-    df_reg_data.iloc[0:,5] = (df1.iloc[0:,26]) + (df1.iloc[0:,24]) 
-    df_reg_data.iloc[0:,6] = (df1.iloc[0:,22]) + (df1.iloc[0:,20]) 
-    df_reg_data.iloc[0:,7] = (df1.iloc[0:,18]) + (df1.iloc[0:,16]) 
-    df_reg_data.iloc[0:,8] = (df1.iloc[0:,15]) + (df1.iloc[0:,13]) 
-    df_reg_data.iloc[0:,9] = (df1.iloc[0:,11]) + (df1.iloc[0:,9]) 
-    df_reg_data.iloc[0:,10] = (df1.iloc[0:,7]) + (df1.iloc[0:,5]) 
-    df_reg_data.iloc[0:,11] = (df1.iloc[0:,3]) + (df1.iloc[0:,1])     
-    df_reg_data.iloc[0:,12] = (df1.iloc[0:,14]) + (df1.iloc[0:,12]) 
-    df_reg_data.iloc[0:,13] = (df1.iloc[0:,10]) + (df1.iloc[0:,8]) 
-    df_reg_data.iloc[0:,14] = (df1.iloc[0:,6]) + (df1.iloc[0:,4]) 
-    df_reg_data.iloc[0:,15] = (df1.iloc[0:,2]) + (df1.iloc[0:,0]) 
+    # 채널 매핑 패턴을 정의
+    channel_pairs = [
+        (31,29), (27,25), (23,21), (19,17),
+        (30,28), (26,24), (22,20), (18,16),
+        (15,13), (11,9),  (7,5),   (3,1),
+        (14,12), (10,8),  (6,4),   (2,0)
+    ]
     
-    # ui.textEdit.clear()
-    # ui.textEdit.setPlainText(str(df_reg_data))
-    
+    # 한번에 모든 채널 매핑 수행
+    for i, (ch1, ch2) in enumerate(channel_pairs):
+        df_reg_data.iloc[0:,i] = df1.iloc[0:,ch1] + df1.iloc[0:,ch2]
+       
     if ui.checkBox_file.isChecked():
         name = name + "_Reg_Table"
         df_reg_data.to_excel(name + ".xlsx")
@@ -270,20 +246,11 @@ def Make_TX_BF(focal_depth_mm):
 
     max_delay = np.max(abs(TXdelay))
     print("max_delay", max_delay) # Pizzabox test
-    # min_delay = np.min(TXdelay) # Pizzabox test
-    # print("min delay", min_delay) # Pizzabox test
 
-    # np.savetxt('Sector_TX_Delay_{0}.csv'.format(focal_depth_mm), TXdelay, fmt='%g', delimiter=',') # Pizzabox test
-
-    # TXdelay_hw = np.round(((BfSync2Rxen * 4) - TXdelay) * 2)
-    # TXdelay_hw = np.round(((BfSync2Rxen ) - TXdelay) ) # Pizzabox Test
-    # TXdelay_hw = np.round( (abs(max_delay) - TXdelay) ) # Pizzabox Test
     TXdelay_hw = np.round(max_delay - TXdelay) # Pizzabox Test
     print("TXdelay_hw", TXdelay_hw)
     
     df1 = pd.DataFrame(TXdelay_hw)
-    # ui.textEdit.clear()
-    # ui.textEdit.setPlainText(str(df1.transpose()))
 
     name = "Probe_Focus_" + ui.lineEdit_focus_S.text() + "mm_Sector" 
     Delay_count(np.int16(TXdelay_hw[:,0]))
@@ -349,197 +316,56 @@ def display_plot(data1, data2, data3, data4):
 def Delay_count(delay_data):
     for i, value in enumerate(delay_data):
         getattr(ui, f"lineEdit_ch_{i+1}").setText(str(value))
-        
-    # ui.lineEdit_ch_1.setText(str(delay_data[0]))
-    # ui.lineEdit_ch_2.setText(str(delay_data[1]))
-    # ui.lineEdit_ch_3.setText(str(delay_data[2]))
-    # ui.lineEdit_ch_4.setText(str(delay_data[3]))
-    # ui.lineEdit_ch_5.setText(str(delay_data[4]))
-    # ui.lineEdit_ch_6.setText(str(delay_data[5]))
-    # ui.lineEdit_ch_7.setText(str(delay_data[6]))
-    # ui.lineEdit_ch_8.setText(str(delay_data[7]))
-    # ui.lineEdit_ch_9.setText(str(delay_data[8]))
-    # ui.lineEdit_ch_10.setText(str(delay_data[9]))
-    # ui.lineEdit_ch_11.setText(str(delay_data[10]))
-    # ui.lineEdit_ch_12.setText(str(delay_data[11]))
-    # ui.lineEdit_ch_13.setText(str(delay_data[12]))
-    # ui.lineEdit_ch_14.setText(str(delay_data[13]))
-    # ui.lineEdit_ch_15.setText(str(delay_data[14]))
-    # ui.lineEdit_ch_16.setText(str(delay_data[15]))
-    # ui.lineEdit_ch_17.setText(str(delay_data[16]))
-    # ui.lineEdit_ch_18.setText(str(delay_data[17]))
-    # ui.lineEdit_ch_19.setText(str(delay_data[18]))
-    # ui.lineEdit_ch_20.setText(str(delay_data[19]))
-    # ui.lineEdit_ch_21.setText(str(delay_data[20]))
-    # ui.lineEdit_ch_22.setText(str(delay_data[21]))
-    # ui.lineEdit_ch_23.setText(str(delay_data[22]))
-    # ui.lineEdit_ch_24.setText(str(delay_data[23]))
-    # ui.lineEdit_ch_25.setText(str(delay_data[24]))
-    # ui.lineEdit_ch_26.setText(str(delay_data[25]))
-    # ui.lineEdit_ch_27.setText(str(delay_data[26]))
-    # ui.lineEdit_ch_28.setText(str(delay_data[27]))
-    # ui.lineEdit_ch_29.setText(str(delay_data[28]))
-    # ui.lineEdit_ch_30.setText(str(delay_data[29]))
-    # ui.lineEdit_ch_31.setText(str(delay_data[30]))
-    # ui.lineEdit_ch_32.setText(str(delay_data[31]))
 
 
 def Delay_hex(delay_int):
     for i, value in enumerate(delay_int):
         getattr(ui, f"lineEdit_ch_{i+1}_hex").setText(hex(value)[2:].zfill(4).upper())
-        
-    # ui.lineEdit_ch_1_hex.setText(str(hex(delay_int[0])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_2_hex.setText(str(hex(delay_int[1])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_3_hex.setText(str(hex(delay_int[2])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_4_hex.setText(str(hex(delay_int[3])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_5_hex.setText(str(hex(delay_int[4])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_6_hex.setText(str(hex(delay_int[5])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_7_hex.setText(str(hex(delay_int[6])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_8_hex.setText(str(hex(delay_int[7])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_9_hex.setText(str(hex(delay_int[8])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_10_hex.setText(str(hex(delay_int[9])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_11_hex.setText(str(hex(delay_int[10])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_12_hex.setText(str(hex(delay_int[11])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_13_hex.setText(str(hex(delay_int[12])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_14_hex.setText(str(hex(delay_int[13])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_15_hex.setText(str(hex(delay_int[14])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_16_hex.setText(str(hex(delay_int[15])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_17_hex.setText(str(hex(delay_int[16])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_18_hex.setText(str(hex(delay_int[17])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_19_hex.setText(str(hex(delay_int[18])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_20_hex.setText(str(hex(delay_int[19])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_21_hex.setText(str(hex(delay_int[20])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_22_hex.setText(str(hex(delay_int[21])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_23_hex.setText(str(hex(delay_int[22])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_24_hex.setText(str(hex(delay_int[23])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_25_hex.setText(str(hex(delay_int[24])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_26_hex.setText(str(hex(delay_int[25])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_27_hex.setText(str(hex(delay_int[26])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_28_hex.setText(str(hex(delay_int[27])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_29_hex.setText(str(hex(delay_int[28])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_30_hex.setText(str(hex(delay_int[29])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_31_hex.setText(str(hex(delay_int[30])[2:].zfill(4).upper()))
-    # ui.lineEdit_ch_32_hex.setText(str(hex(delay_int[31])[2:].zfill(4).upper())) 
 
 
 def Pattern_Gen():
-    HZ = "000"
-    HV_M = "001"
-    HV_P = "010"
-    GND = "011"
-    EOP = "111"
-
-    global LVL, PER, LVL_, PER_
-    LVL = [None] *16
-    PER = [None] *16
-    LVL_ = [None] *16
-    PER_ = [None] *16    
-
-    Read_LVL()    
-    for i in range(16):
-        if LVL[i] == "HIGH_Z":
-            LVL_[i] = HZ
-        elif LVL[i] == "HV_P":
-            LVL_[i] = HV_P
-        elif LVL[i] == "HV_M":
-            LVL_[i] = HV_M
-        elif LVL[i] == "GND":
-            LVL_[i] = GND
-        elif LVL[i] == "END_of_Pattern":
-            LVL_[i] = EOP
-    print("LVL_", LVL_)
-
-    Read_PER()    
-    for i in range(16):
-        temp = (int(PER[i]) * int(ui.lineEdit_clock.text()) / 1000) - 2
-        if temp < 0:
-            PER_[i] = str(bin(0)[2:].zfill(5))
-        else:
-            PER_[i] = str(bin(int(temp))[2:].zfill(5))
-    print("PER_", PER_)
+    # 상수 정의
+    LEVEL_CODES = {
+        "HIGH_Z": "000",
+        "HV_M": "001",
+        "HV_P": "010",
+        "GND": "011",
+        "END_of_Pattern": "111"
+    }
     
-    Reg120 = [None]*4
-    Reg121 = [None]*4
-    Reg122 = [None]*4
-    Reg123 = [None]*4
+    # LVL과 PER 값 읽기
+    LVL = [getattr(ui, f"comboBox_LVL_{i+1}").currentText() for i in range(16)]
+    PER = [getattr(ui, f"lineEdit_PER_{i+1}").text() for i in range(16)]
     
-    Reg120[3] = '0b' + PER_[3] + LVL_[3]
-    Reg120[2] = '0b' + PER_[2] + LVL_[2] 
-    Reg120[1] = '0b' + PER_[1] + LVL_[1] 
-    Reg120[0] = '0b' + PER_[0] + LVL_[0]
-
-    Reg121[3] = '0b' + PER_[7] + LVL_[7]
-    Reg121[2] = '0b' + PER_[6] + LVL_[6]
-    Reg121[1] = '0b' + PER_[5] + LVL_[5]
-    Reg121[0] = '0b' + PER_[4] + LVL_[4]
-
-    Reg122[3] = '0b' + PER_[11] + LVL_[11]
-    Reg122[2] = '0b' + PER_[10] + LVL_[10]
-    Reg122[1] = '0b' + PER_[9] + LVL_[9]
-    Reg122[0] = '0b' + PER_[8] + LVL_[8]
-
-    Reg123[3] = '0b' + PER_[15] + LVL_[15]
-    Reg123[2] = '0b' + PER_[14] + LVL_[14]
-    Reg123[1] = '0b' + PER_[13] + LVL_[13]
-    Reg123[0] = '0b' + PER_[12] + LVL_[12]
-    print(Reg120, Reg121, Reg122, Reg123)
+    # LVL 코드 변환
+    LVL_ = [LEVEL_CODES[level] for level in LVL]
     
-    Reg_120 = str(hex(int(Reg120[3],2))[2:].zfill(2)) + str(hex(int(Reg120[2],2))[2:].zfill(2)) + str(hex(int(Reg120[1],2))[2:].zfill(2)) + str(hex(int(Reg120[0],2))[2:].zfill(2))
-    Reg_121 = str(hex(int(Reg121[3],2)))[2:].zfill(2) + str(hex(int(Reg121[2],2)))[2:].zfill(2) + str(hex(int(Reg121[1],2)))[2:].zfill(2) + str(hex(int(Reg121[0],2)))[2:].zfill(2)
-    Reg_122 = str(hex(int(Reg122[3],2)))[2:].zfill(2) + str(hex(int(Reg122[2],2)))[2:].zfill(2) + str(hex(int(Reg122[1],2)))[2:].zfill(2) + str(hex(int(Reg122[0],2)))[2:].zfill(2)
-    Reg_123 = str(hex(int(Reg123[3],2)))[2:].zfill(2) + str(hex(int(Reg123[2],2)))[2:].zfill(2) + str(hex(int(Reg123[1],2)))[2:].zfill(2) + str(hex(int(Reg123[0],2)))[2:].zfill(2)
-    print(Reg_120, Reg_121, Reg_122, Reg_123)
+    # PER 값 계산
+    clock = int(ui.lineEdit_clock.text())
+    PER_ = [str(bin(max(0, int(int(per) * clock / 1000) - 2))[2:].zfill(5)) for per in PER]
     
-    ui.lineEdit_R120.setText("0x" + Reg_120)
-    ui.lineEdit_R121.setText("0x" + Reg_121)
-    ui.lineEdit_R122.setText("0x" + Reg_122)
-    ui.lineEdit_R123.setText("0x" + Reg_123)
+    # 레지스터 값 계산
+    regs = []
+    for i in range(4):  # Reg120 ~ Reg123
+        reg_values = []
+        for j in range(4):
+            idx = i * 4 + (3 - j)  # 역순으로 인덱스 계산
+            reg_values.append(hex(int('0b' + PER_[idx] + LVL_[idx], 2))[2:].zfill(2))
+        regs.append(''.join(reg_values))
+    
+    # UI에 결과 표시
+    for i, reg in enumerate(regs):
+        getattr(ui, f"lineEdit_R{120+i}").setText("0x" + reg)
 
 
 def Read_LVL():
     for i in range(16):
         LVL[i] = getattr(ui, f"comboBox_LVL_{i+1}").currentText()
-        
-    # LVL[0] = ui.comboBox_LVL_1.currentText()
-    # LVL[1] = ui.comboBox_LVL_2.currentText()
-    # LVL[2] = ui.comboBox_LVL_3.currentText()
-    # LVL[3] = ui.comboBox_LVL_4.currentText()
-    # LVL[4] = ui.comboBox_LVL_5.currentText()
-    # LVL[5] = ui.comboBox_LVL_6.currentText()
-    # LVL[6] = ui.comboBox_LVL_7.currentText()
-    # LVL[7] = ui.comboBox_LVL_8.currentText()
-    # LVL[8] = ui.comboBox_LVL_9.currentText()
-    # LVL[9] = ui.comboBox_LVL_10.currentText()
-    # LVL[10] = ui.comboBox_LVL_11.currentText()  
-    # LVL[11] = ui.comboBox_LVL_12.currentText() 
-    # LVL[12] = ui.comboBox_LVL_13.currentText() 
-    # LVL[13] = ui.comboBox_LVL_14.currentText() 
-    # LVL[14] = ui.comboBox_LVL_15.currentText() 
-    # LVL[15] = ui.comboBox_LVL_16.currentText()      
-    # print(LVL)
 
 
 def Read_PER():
     for i in range(16):
         PER[i] = getattr(ui, f"lineEdit_PER_{i+1}").text()
-        
-    # PER[0] = ui.lineEdit_PER_1.text()
-    # PER[1] = ui.lineEdit_PER_2.text()
-    # PER[2] = ui.lineEdit_PER_3.text()
-    # PER[3] = ui.lineEdit_PER_4.text()
-    # PER[4] = ui.lineEdit_PER_5.text()
-    # PER[5] = ui.lineEdit_PER_6.text()
-    # PER[6] = ui.lineEdit_PER_7.text()
-    # PER[7] = ui.lineEdit_PER_8.text()
-    # PER[8] = ui.lineEdit_PER_9.text()
-    # PER[9] = ui.lineEdit_PER_10.text()
-    # PER[10] = ui.lineEdit_PER_11.text()
-    # PER[11] = ui.lineEdit_PER_12.text()
-    # PER[12] = ui.lineEdit_PER_13.text()
-    # PER[13] = ui.lineEdit_PER_14.text()
-    # PER[14] = ui.lineEdit_PER_15.text()
-    # PER[15] = ui.lineEdit_PER_16.text()
-    # print(PER)    
 
 
 ui.pushButton_L_cal.clicked.connect(Linear_Gen_Delay)
