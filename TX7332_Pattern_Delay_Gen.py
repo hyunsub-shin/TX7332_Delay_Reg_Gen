@@ -11,6 +11,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 
+from TX7332_ui import Ui_MainWindow
+
 '''
 Make exe file cmd
  - pyinstaller -w -F effect_control.py
