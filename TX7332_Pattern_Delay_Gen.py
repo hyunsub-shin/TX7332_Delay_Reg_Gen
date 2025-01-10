@@ -358,16 +358,6 @@ def Pattern_Gen():
         getattr(ui, f"lineEdit_R{120+i}").setText("0x" + reg)
 
 
-def Read_LVL():
-    for i in range(16):
-        LVL[i] = getattr(ui, f"comboBox_LVL_{i+1}").currentText()
-
-
-def Read_PER():
-    for i in range(16):
-        PER[i] = getattr(ui, f"lineEdit_PER_{i+1}").text()
-
-
 ui.pushButton_L_cal.clicked.connect(Linear_Gen_Delay)
 ui.pushButton_C_cal.clicked.connect(Convex_Gen_Delay)
 ui.pushButton_S_cal.clicked.connect(Sector_Gen_Delay)
