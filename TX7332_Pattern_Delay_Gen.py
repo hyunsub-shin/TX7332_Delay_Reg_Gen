@@ -43,8 +43,16 @@ one more Make exe file cmd
 
 ####################################################
 app = QtWidgets.QApplication([])
-BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
-ui = uic.loadUi(BASE_DIR + r'\TX7332_Pattern_Delay_Gen.ui')
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+ui_file = os.path.join(BASE_DIR, 'TX7332_Pattern_Delay_Gen.ui')
+
+# 운영체제 확인 및 경로 설정
+if os.name == 'nt':  # Windows
+    ui_file = ui_file.replace('/', '\\')
+else:  # Linux/Unix
+    ui_file = ui_file.replace('\\', '/')
+
+ui = uic.loadUi(ui_file)
 ui.setWindowTitle("TX7332 Delay & Pattern Reg Generator")
 ####################################################
 

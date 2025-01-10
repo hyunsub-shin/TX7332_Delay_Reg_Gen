@@ -28,6 +28,11 @@ jobs:
         pip install pandas numpy PyQt5
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         
+    - name: Check file structure
+      run: |
+        pwd
+        ls -la
+        
     - name: Run Python
       run: |
         export QT_DEBUG_PLUGINS=1
