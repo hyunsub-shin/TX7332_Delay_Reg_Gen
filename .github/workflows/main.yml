@@ -80,7 +80,7 @@ jobs:
       env:
         CI: true  # CI 환경 변수 설정
       run: |
-        xport QT_DEBUG_PLUGINS=1  # Qt 디버그 활성화
+        export QT_DEBUG_PLUGINS=1  # Qt 디버그 활성화
         export DISPLAY=:99  # 가상 디스플레이 설정
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &  # 가상 디스플레이 서버 실행
         sleep 3  # 서버 시작 대기
