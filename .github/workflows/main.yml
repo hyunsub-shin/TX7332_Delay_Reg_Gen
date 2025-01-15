@@ -80,11 +80,12 @@ jobs:
       env:
         CI: true  # CI 환경 변수 설정
       run: |
-        export QT_DEBUG_PLUGINS=1  # Qt 디버그 활성화
+        xport QT_DEBUG_PLUGINS=1  # Qt 디버그 활성화
         export DISPLAY=:99  # 가상 디스플레이 설정
         Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &  # 가상 디스플레이 서버 실행
         sleep 3  # 서버 시작 대기
-        timeout 10s python3 TX7332_Pattern_Delay_Gen.py || true  # 10초 후 자동 종료
+        if [ ! -f TX7332_Pattern_Delay_Gen.py ]; then echo "Error: TX7332_Pattern_Delay_Gen.py not found!" && exit 1; fi  # 파일 존재 여부 확인
+        timeout 10s python3 TX7332_Pattern_Delay_Gen.py  # 10초 후 자동 종료
 
   # 릴리스 자동화를 위한 새로운 job
   release:
